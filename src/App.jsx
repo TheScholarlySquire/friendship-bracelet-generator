@@ -1,35 +1,59 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState } from 'react';
+import axios from 'axios';
 
 function App() {
-  const [count, setCount] = useState(0)
+    const [text, setText] = useState('');
+    const [color1, setColor1] = useState ('#ff69b4'); //pink
+    const [color2, setColor2] = useState ('#9370DB'); //purple
+    const [imageUrl, setImageUrl] = useState ('null');
 
-  return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    const handleGenerate = async () => {
+        try {
+            const response = await axios.post('http://localhost:5000/generate', {
+                text,
+                color1,
+                color2,
+            }, {
+                responseType: 'blob'
+            });
+
+            const url = URL.createObjectURL(response.data);
+            setImageUrl(url);
+        } catch (error) {
+            console.error('Failed to generate bracelet image', error);
+        }
+    };
+
+    return (
+        <div style={{ padding: '2rem', fontFamily: 'Arial' }}>
+            <h1>Friendship Bracelet Generator</h1>
+
+            <input
+                type='text'
+                placeholder='Enter text or emojis'
+                value={text}
+                onChange={(e) => setText(e.target.value)}
+            />
+
+            <div style={{ marginTop: '1rem' }}>
+                <label>Colour 1: </label>
+                <input type='color' value={color1} onChange={(e) => setColor1(e.target.value)} />
+                <label style={{ marginLeft: '1rem' }}>Colour 2: </label>
+                <input type='color' value={color2} onChange={(e) => setColor2(e.target.value)} />
+            </div>
+
+            <button style={{ marginTop: '1rem' }} onClick={handleGenerate}>
+                Generate Bracelet
+            </button>
+
+            {imageUrl &&  (
+                <div style={{ marginTop: '2rem' }}>
+                    <h2>Your bracelet</h2>
+                    <img src={imageUrl} alt='bracelet' />
+                </div>
+            )}
+        </div>
+    );
 }
 
-export default App
+export default App;
