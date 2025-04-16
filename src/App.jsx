@@ -1,5 +1,18 @@
-import { useState, useRef } from 'react'; //useRef to directly interact with the <canvas> DOM element.
-import { useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
+
+//debounced effect custom hook
+function useDebouncedEffect(callback, dependencies, delay) {
+    const timeoutRef = useRef();
+
+    useEffect(() => {
+        clearTimeout(timeoutRef.current);
+        timeoutRef.current = setTimeout(() => {
+            callback();
+        }, delay);
+
+        return () => clearTimeout(timeoutRef.current);
+    }, dependencies);
+}
 
 function drawHeart(ctx, x, y, size) {
     ctx.beginPath();
@@ -28,7 +41,6 @@ function drawHeart(ctx, x, y, size) {
 
     ctx.closePath();
 }
-
 
 function drawStar(ctx, cx, cy, outerRadius, points = 5) {
     const step = Math.PI / points;
@@ -81,43 +93,62 @@ function App() {
     const [leftCharmShape, setLeftCharmShape] = useState('circle');
     const [rightCharmShape, setRightCharmShape] = useState('circle');
 
-
     const generateBracelet = () => {
         const canvas = canvasRef.current;
         const ctx = canvas.getContext('2d');
         const fullText = `${leftCharm}${text}${rightCharm}`;
         const fullLength = fullText.length;
 
-        // Clear the canvas before drawing
+        // Clear canvas
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
         const beadRadius = 20;
         const spacing = 10;
         const startX = 50;
         const centerY = 75;
+        const amplitude = 15; // Curve height
 
         const gradient = ctx.createLinearGradient(0, 0, canvas.width, 0);
         gradient.addColorStop(0, color1);
         gradient.addColorStop(1, color2);
 
-        //each iteration will be a single bead on the bracelet
-        for (let i = 0; i < fullText.length; i++) {
-            const char = fullText[i];
+        // Prepare bead positions with curve
+        const beadPositions = [];
+        for (let i = 0; i < fullLength; i++) {
             const x = startX + i * (beadRadius * 2 + spacing);
-            let shape = beadShapes[i] || 'circle';  // Default to 'circle' if no shape is selected
+            const y = (fullLength > 1)
+                ? centerY + amplitude * Math.sin((i / (fullLength - 1)) * Math.PI)
+                : centerY; // Avoid NaN on single character
+            beadPositions.push({ x, y });
+        }
 
-            //check if current index is a Charm
+        // Draw the connecting string
+        ctx.beginPath();
+        ctx.strokeStyle = '#444';
+        ctx.lineWidth = 2;
+        ctx.moveTo(beadPositions[0].x, beadPositions[0].y);
+        for (let i = 1; i < beadPositions.length; i++) {
+            ctx.lineTo(beadPositions[i].x, beadPositions[i].y);
+        }
+        ctx.stroke();
+
+        // Draw each bead
+        for (let i = 0; i < fullLength; i++) {
+            const char = fullText[i];
+            const { x, y } = beadPositions[i];
+            let shape = beadShapes[i] || 'circle';
+
+            // Apply charm shapes if needed
             if (i < leftCharm.length) {
                 shape = leftCharmShape;
             } else if (i >= leftCharm.length + text.length) {
                 shape = rightCharmShape;
             }
 
-            //draw the bead shape
             ctx.beginPath();
 
+            // Background color logic
             let fillStyle;
-
             if (backgroundStyle === 'gradient') {
                 fillStyle = gradient;
             } else if (backgroundStyle === 'solid') {
@@ -127,63 +158,59 @@ function App() {
             }
             ctx.fillStyle = fillStyle;
 
+            // Draw the shape
             switch (shape) {
                 case 'circle':
-                    ctx.arc(x, centerY, beadRadius, 0, Math.PI * 2);
+                    ctx.arc(x, y, beadRadius, 0, Math.PI * 2);
                     break;
                 case 'square':
-                    ctx.rect(x - beadRadius, centerY - beadRadius, beadRadius * 2, beadRadius * 2);
+                    ctx.rect(x - beadRadius, y - beadRadius, beadRadius * 2, beadRadius * 2);
                     break;
                 case 'diamond':
-                    ctx.moveTo(x, centerY - beadRadius);
-                    ctx.lineTo(x + beadRadius, centerY);
-                    ctx.lineTo(x, centerY + beadRadius);
-                    ctx.lineTo(x - beadRadius, centerY);
+                    ctx.moveTo(x, y - beadRadius);
+                    ctx.lineTo(x + beadRadius, y);
+                    ctx.lineTo(x, y + beadRadius);
+                    ctx.lineTo(x - beadRadius, y);
                     ctx.closePath();
                     break;
                 case 'squircle':
-                    drawSquircle(ctx, x, centerY, beadRadius * 2, beadRadius * 2, 10);
+                    drawSquircle(ctx, x, y, beadRadius * 2, beadRadius * 2, 10);
                     break;
                 case 'heart':
-                    drawHeart(ctx, x, centerY, beadRadius);
+                    drawHeart(ctx, x, y, beadRadius);
                     break;
                 case 'star':
-                    drawStar(ctx, x, centerY, beadRadius, 5);
+                    drawStar(ctx, x, y, beadRadius, 5);
                     break;
                 default:
-                    ctx.arc(x, centerY, beadRadius, 0, Math.PI * 2);
+                    ctx.arc(x, y, beadRadius, 0, Math.PI * 2);
             }
 
             ctx.fill();
             ctx.stroke();
 
-            // Draw the text in the center of each bead
+            // Draw character in the center of the bead
             ctx.fillStyle = fontColor;
             ctx.font = `20px ${font}, "Segoe UI Emoji", "Apple Color Emoji", sans-serif`;
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
-            ctx.fillText(char, x, centerY);
+            ctx.fillText(char, x, y);
         }
 
-
-        // Convert canvas to image URL
+        // Save as image
         const url = canvas.toDataURL('image/png');
         setImageUrl(url);
     };
 
 //effect allows dynamic loading
 //using debounce behaviour for smooth loading (changes take effect once user 'pauses' action for 100ms)
-    useEffect(() => {
-        const timeout = setTimeout(() => {
-            if (text) {
-                generateBracelet();
-            } else {
-                setImageUrl(null);
-            }
-        }, 100); // 150ms debounce delay
-
-        return () => clearTimeout(timeout); // cleanup to prevent stacking
-        }, [
+    useDebouncedEffect(() => {
+        if (text) {
+            generateBracelet();
+        } else {
+            setImageUrl(null);
+        }
+    }, [
         text,
         color1,
         color2,
@@ -196,7 +223,7 @@ function App() {
         rightCharmShape,
         backgroundStyle,
         alternateColors
-    ]);
+    ], 150); // debounce delay in milliseconds
 
     useEffect(() => {
     setBeadShapes((prevShapes) => {
