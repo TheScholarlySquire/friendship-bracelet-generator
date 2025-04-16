@@ -5,7 +5,7 @@ function App() {
     const [text, setText] = useState('');
     const [color1, setColor1] = useState ('#ff69b4'); //pink
     const [color2, setColor2] = useState ('#9370DB'); //purple
-    const [imageUrl, setImageUrl] = useState ('null');
+    const [imageUrl, setImageUrl] = useState (null);
 
     const handleGenerate = async () => {
         try {
@@ -13,14 +13,18 @@ function App() {
                 text,
                 color1,
                 color2,
-            }, {
-                responseType: 'blob'
+            },
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                responseType: 'blob',
             });
 
             const url = URL.createObjectURL(response.data);
             setImageUrl(url);
         } catch (error) {
-            console.error('Failed to generate bracelet image', error);
+            console.error('Failed to generate bracelet image', error.response || error);
         }
     };
 
