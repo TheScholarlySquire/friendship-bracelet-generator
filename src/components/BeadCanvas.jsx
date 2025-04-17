@@ -1,6 +1,37 @@
 import { useRef, useEffect } from 'react';
 import { drawHeart, drawStar, drawSquircle } from '../utils/canvasShapes';
 
+function hexToRgb(hex) {
+  if (typeof hex !== 'string') throw new Error('Expected a string value for hex color');
+  hex = hex.replace("#", "");
+  const bigint = parseInt(hex, 16);
+  return [(bigint >> 16) & 255, (bigint >> 8) & 255, bigint & 255];
+}
+
+function getLuminance(r, g, b) {
+  const a = [r, g, b].map((x) => {
+    x /= 255;
+    return x <= 0.03928 ? x / 12.92 : Math.pow((x + 0.055) / 1.055, 2.4);
+  });
+  return 0.2126 * a[0] + 0.7152 * a[1] + 0.0722 * a[2];
+}
+
+function getContrastRatio(hex1, hex2) {
+  const [r1, g1, b1] = hexToRgb(hex1);
+  const [r2, g2, b2] = hexToRgb(hex2);
+  const lum1 = getLuminance(r1, g1, b1);
+  const lum2 = getLuminance(r2, g2, b2);
+  return lum1 > lum2
+    ? (lum1 + 0.05) / (lum2 + 0.05)
+    : (lum2 + 0.05) / (lum1 + 0.05);
+}
+
+function getContrastingTextColor(bgHex) {
+  const [r, g, b] = hexToRgb(bgHex);
+  const lum = getLuminance(r, g, b);
+  return lum < 0.5 ? '#ffffff' : '#000000';
+}
+
 function BeadCanvas({
   text, color1, color2, backgroundStyle, alternateColors,
   beadShapes, fontColor, font, leftCharm, rightCharm,
@@ -56,8 +87,24 @@ function BeadCanvas({
           break;
       }
 
-      // Text
-      ctx.fillStyle = fontColor;
+      // Text: Check for low contrast and adjust if needed
+      let actualFontColor = fontColor;
+
+      if (typeof backgroundColor === 'string') {
+          const contrast = getContrastRatio(backgroundColor, fontColor);
+          if (contrast < 4.5) {
+              actualFontColor = getContrastingTextColor(backgroundColor);
+          }
+      } else if (backgroundColor instanceof CanvasGradient) {
+          // For gradients, use color1 to approximate contrast
+          const fallbackColor = color1;
+          const contrast = getContrastRatio(fallbackColor, fontColor);
+          if (contrast < 4.5) {
+              actualFontColor = getContrastingTextColor(fallbackColor);
+          }
+      }
+
+      ctx.fillStyle = actualFontColor;
       ctx.font = `20px ${font}`;
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
@@ -69,13 +116,13 @@ function BeadCanvas({
     const allChars = [
       ...(leftCharm ? [leftCharm] : []),
       ...text.split(''),
-      ...(rightCharm ? [rightCharm] : [])
+      ...(rightCharm ? [rightCharm] : []),
     ];
 
     const allShapes = [
       ...(leftCharm ? [leftCharmShape] : []),
       ...beadShapes,
-      ...(rightCharm ? [rightCharmShape] : [])
+      ...(rightCharm ? [rightCharmShape] : []),
     ];
 
     const beadPositions = allChars.map((_, i) => {
