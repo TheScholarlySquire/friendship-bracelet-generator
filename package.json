@@ -1,7 +1,7 @@
 {
   "name": "friendship",
   "private": true,
-  "homepage": "https://thescholarlysquire.github.io/",
+  "homepage": "https://thescholarlysquire.github.io/friendship-bracelet-generator",
   "version": "0.0.0",
   "type": "module",
   "scripts": {
