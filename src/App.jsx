@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { drawHeart, drawStar, drawSquircle } from './utils/canvasShapes';
 import BeadCanvas from './components/BeadCanvas';
 import BraceletControls from './components/BraceletControls';
+import './App.css';
 
 // Debounced effect custom hook
 function useDebouncedEffect(callback, dependencies, delay) {
@@ -45,7 +46,7 @@ function App() {
     }, [text]);
 
     return (
-        <div style={{ padding: '2rem', fontFamily: 'Arial' }}>
+        <div id="bracelet-main">
             <h1>Friendship Bracelet Generator</h1>
 
             {/* Pass all necessary props to BraceletControls */}

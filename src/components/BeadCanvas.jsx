@@ -1,5 +1,6 @@
 import { useRef, useEffect } from 'react';
 import { drawHeart, drawStar, drawSquircle } from '../utils/canvasShapes';
+import '../styles/BeadCanvas.css';
 
 function hexToRgb(hex) {
   if (typeof hex !== 'string') throw new Error('Expected a string value for hex color');
