@@ -35,6 +35,7 @@ function App() {
     const [rightCharmShape, setRightCharmShape] = useState('circle');
     const beadCanvasRef = useRef();
     const [backgroundImage, setBackgroundImage] = useState('transparent');
+    const [shouldRedrawBackground, setShouldRedrawBackground] = useState(false);
 
     // Effect to update bead shapes based on text length
     useEffect(() => {
@@ -81,6 +82,8 @@ function App() {
                 setAlternateColors={setAlternateColors}
                 backgroundImage={backgroundImage}
                 setBackgroundImage={setBackgroundImage}
+                shouldRedrawBackground={shouldRedrawBackground}
+                setShouldRedrawBackground={setShouldRedrawBackground}
             />
 
             {/* Pass the necessary props to BeadCanvas for rendering */}
@@ -99,6 +102,8 @@ function App() {
                 leftCharmShape={leftCharmShape}
                 rightCharmShape={rightCharmShape}
                 backgroundImage={backgroundImage}
+                shouldRedrawBackground={shouldRedrawBackground}
+                setShouldRedrawBackground={setShouldRedrawBackground}
             />
             <button onClick={() => beadCanvasRef.current?.downloadImage()}>
                 download

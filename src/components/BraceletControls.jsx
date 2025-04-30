@@ -27,7 +27,9 @@ const BraceletControls = ({
     alternateColors,
     setAlternateColors,
     backgroundImage,
-    setBackgroundImage
+    setBackgroundImage,
+    shouldRedrawBackground,
+    setShouldRedrawBackground
 }) => {
     const [beadShapePatternMode, setBeadShapePatternMode] = useState('manual');
     const [patternStep, setPatternStep] = useState(2); // For 'alternate-every-n'
@@ -57,7 +59,6 @@ const BraceletControls = ({
         }
         setBeadShapes(newShapes);
     };
-
 
     const generateBeadShapes = () => {
         let newShapes = [];
@@ -322,13 +323,30 @@ const BraceletControls = ({
                                 onChange={(e) => {
                                     console.log('Selected background image:', e.target.value);
                                     setBackgroundImage(e.target.value)
+                                    setShouldRedrawBackground(true);
                                 }}>
                                     <option value="transparent">Transparent</option>
-                                    <option value="/img/forrest.jpg">Background 1</option>
-                                    <option value="/img/lake.jpg">Background 2</option>
-                                    <option value="/img/meadow.jpg">Background 3</option>
-                                    {/* Add more as you want */}
+                                    <option value="solid:#ffffff">Solid Colour</option>
+                                    <option value="/img/lake.jpg">Lake</option>
+                                    <option value="/img/meadow.jpg">Meadow</option>
+                                    <option value="/img/hilti1.jpg">hilti1</option>
+                                    <option value="/img/hilti2.png">hilti2</option>
+                                    <option value="/img/hilti3.jpg">hilti3</option>
+                                    <option value="/img/hilti4.png">hilti4</option>
                                 </select>
+                                
+                                {backgroundImage?.startsWith('solid:') && (
+                                  <input
+                                    type="color"
+                                    value={backgroundImage.split(':')[1] || '#ffffff'}
+                                    onChange={(e) => {
+                                      const color = e.target.value;
+                                      setBackgroundImage(`solid:${color}`);
+                                      setShouldRedrawBackground(true);
+                                    }}
+                                    style={{ marginLeft: '1rem' }}
+                                  />
+                                )}
                             </div>
                         </div>
 
