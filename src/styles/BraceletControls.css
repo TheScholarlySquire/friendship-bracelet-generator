@@ -1,0 +1,99 @@
+#controls-container {
+    display: flex;
+    flex-direction: column;
+    max-width: 95vw;
+}
+#main-input {
+    height: 25px;
+    width: 50%;
+    align-self: center;
+}
+.optionsContainer {
+    align-self: center;
+    display: flex;
+    width: 95%;
+    justify-content: space-around;
+    border: 1px solid #464646;
+    border-radius: 8px;
+    background-color: #f1f1f190;
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
+    margin: 10px 0;
+
+}
+.optionsContainerInner {
+    align-content: center;
+}
+.optionsContainerInner > div {
+    margin: 10px 0;
+}
+.charmOptions {
+    display: flex;
+    justify-content: space-between;
+}
+.charmOptions > div {
+    padding: 0 10px;
+}
+#fontOptions > div {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+#beadShapes {
+    display: grid;
+    grid-template-rows: 1fr 1fr;
+    max-width: 93vw;
+}
+#beadShapes > label {
+    width: 100%;
+    text-align: center;
+    display: block;
+}
+#beadShapes > .optionsContainerInner {
+    display: flex;
+    flex-wrap: nowrap;
+}
+.beadShapesWrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+.beadShapesScroll {
+    display: flex;
+    overflow-x: auto;
+    scroll-behavior: smooth; /* smooth scrolling */
+    gap: 0.5rem;
+    padding: 0.5rem;
+    flex: 1;
+}
+.beadShapesScroll::-webkit-scrollbar {
+    display: none; /* Hide ugly scrollbar on Chrome/Safari */
+}
+.beadShapesScroll {
+    -ms-overflow-style: none; /* Hide scrollbar on IE and Edge */
+    scrollbar-width: none; /* Hide scrollbar on Firefox */
+}
+.beadShapesScroll select {
+    flex: 0 0 auto;
+    min-width: 120px;
+}
+.scrollHint {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.5rem;
+    color: #aaa;
+    pointer-events: none;
+    user-select: none;
+    z-index: 10;
+}
+.leftHint {
+    left: 5px;
+}
+.rightHint {
+    right: 5px;
+}
+.labelAndOption {
+    margin-top: 0.5rem;
+    display: flex;
+    align-items: center;
+}

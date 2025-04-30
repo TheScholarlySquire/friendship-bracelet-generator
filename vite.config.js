@@ -1,8 +1,9 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
-// https://vite.dev/config/
-export default defineConfig({
-    base: '/friendship-bracelet-generator/',
-  plugins: [react()],
-})
+export default defineConfig(({ mode }) => {
+  return {
+      base: mode === 'production' ? '/friendship-bracelet-generator/' : '/',
+      plugins: [react()],
+  };
+});

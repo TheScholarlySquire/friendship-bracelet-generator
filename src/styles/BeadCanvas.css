@@ -1,0 +1,18 @@
+canvas {
+    display: block;
+    max-width: 100%;
+    width: 100% !important;
+    height: auto !important;
+    background-color: transparent;
+}
+.canvasWrapper {
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding-bottom: 1rem; /* optional: makes it nicer to scroll on mobile */
+    -webkit-overflow-scrolling: touch; /* iOS native momentum scroll */
+}
+
+.canvasWrapper canvas {
+    display: block; /* removes weird inline gaps */
+}

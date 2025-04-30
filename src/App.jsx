@@ -33,6 +33,8 @@ function App() {
     const [rightCharm, setRightCharm] = useState('');
     const [leftCharmShape, setLeftCharmShape] = useState('circle');
     const [rightCharmShape, setRightCharmShape] = useState('circle');
+    const beadCanvasRef = useRef();
+    const [backgroundImage, setBackgroundImage] = useState('transparent');
 
     // Effect to update bead shapes based on text length
     useEffect(() => {
@@ -44,6 +46,8 @@ function App() {
             return newShapes.slice(0, text.length);
         });
     }, [text]);
+
+    // console.log('App backgroundImage:', backgroundImage);
 
     return (
         <div id="bracelet-main">
@@ -75,10 +79,13 @@ function App() {
                 setColor2={setColor2}
                 alternateColors={alternateColors}
                 setAlternateColors={setAlternateColors}
+                backgroundImage={backgroundImage}
+                setBackgroundImage={setBackgroundImage}
             />
 
             {/* Pass the necessary props to BeadCanvas for rendering */}
             <BeadCanvas
+                ref={beadCanvasRef}
                 text={text}
                 color1={color1}
                 color2={color2}
@@ -91,7 +98,11 @@ function App() {
                 rightCharm={rightCharm}
                 leftCharmShape={leftCharmShape}
                 rightCharmShape={rightCharmShape}
+                backgroundImage={backgroundImage}
             />
+            <button onClick={() => beadCanvasRef.current?.downloadImage()}>
+                download
+            </button>
         </div>
     );
 }
