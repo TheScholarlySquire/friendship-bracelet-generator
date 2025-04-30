@@ -239,7 +239,33 @@ const BeadCanvas = forwardRef(({
             console.log('Resolved image path:', img.src);
             img.onload = () => {
                 console.log('Background image loaded:', img.src);
-                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+                //Preserve image aspect ratio and center-crop
+                const imgRatio = img.width / img.height;
+                const canvasRatio = canvas.width / canvas.height;
+
+                let drawWidth, drawHeight, offsetX, offsetY;
+
+                if (imgRatio > canvasRatio) {
+                    // Image is wider than canvas
+                    drawHeight = canvas.height;
+                    drawWidth = img.width * (canvas.height / img.height);
+                    offsetX = -(drawWidth - canvas.width) / 2;
+                    offsetY = 0;
+                } else {
+                    // Image is taller than canvas
+                    drawWidth = canvas.width;
+                    drawHeight = img.height * (canvas.width / img.width);
+                    offsetX = 0;
+                    offsetY = -(drawHeight - canvas.height) / 2;
+                }
+
+                ctx.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
+
+                //Optional translucent white overlay for readability (adjust opacity as needed)
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
                 drawBracelet();
             };
             img.onerror = (err) => {
