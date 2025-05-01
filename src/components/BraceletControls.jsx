@@ -83,46 +83,55 @@ const BraceletControls = ({
 
     return (
         <>
-            <div id="controls-container">
-                <div className="optionsContainer">
-                    <input
-                        id="main-input"
-                        type='text'
-                        placeholder='Enter text or emojis'
-                        value={text}
-                        onChange={(e) => setText(e.target.value)}
-                        maxLength={20}
-                    />
-                    <div id="fontOptions" className="optionsContainerInner">
-                        <div>
-                            <label>Font: </label>
-                            <select value={font} onChange={(e) => setFont(e.target.value)}>
-                                <option value="Delius Swash Caps">Option 1</option>
-                                <option value="Suez One">Option 2</option>
-                                <option value="Tagesschrift">Option 3</option>
-                                <option value="Fredericka the Great">Option 4</option>
-                                <option value="Emilys Candy">Option 5</option>
-                                <option value="Rubik Doodle Shadow">Option 6</option>
-                                <option value="Berkshire Swash">Option 7</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label>Font colour: </label>
-                            <input
-                                type="color"
-                                value={fontColor}
-                                onChange={(e) => setFontColor(e.target.value)}
-                            />
-                        </div>
+            <div id="controls-container" className="grid auto-rows-max">
+                <div id="beadText" className="optionsContainer flex justify-evenly gap-8">
+                    <div className="flex-[2] flex rounded-md shadow-sm border border-slate-200 overflow-hidden focus-within:ring-2 focus-within:ring-slate-400 transition p-1">
+                        <input
+                            id="main-input"
+                            className="flex-1 bg-transparent placeholder:text-slate-400 text-slate-700 text-sm px-3 py-2 focus:outline-none"
+                            type='text'
+                            placeholder='Enter text or emojis'
+                            value={text}
+                            onChange={(e) => setText(e.target.value)}
+                            maxLength={20}
+                        />
+                        <select
+                            value={font}
+                            onChange={(e) => setFont(e.target.value)}
+                            className="bg-slate-100 text-slate-700 text-sm px-2 border-l border-slate-200 focus:outline-none"
+                        >
+                            <option value="Delius Swash Caps" style={{ fontFamily: 'Delius Swash Caps' }}>Option 1</option>
+                            <option value="Suez One" style={{ fontFamily: 'Suez One' }}>Option 2</option>
+                            <option value="Tagesschrift" style={{ fontFamily: 'Tagesschrift' }}>Option 3</option>
+                            <option value="Fredericka the Great" style={{ fontFamily: 'Fredericka the Great' }}>Option 4</option>
+                            <option value="Emilys Candy" style={{ fontFamily: 'Emilys Candy' }}>Option 5</option>
+                            <option value="Rubik Doodle Shadow" style={{ fontFamily: 'Rubik Doodle Shadow' }}>Option 6</option>
+                            <option value="Berkshire Swash" style={{ fontFamily: 'Berkshire Swash' }}>Option 7</option>
+                        </select>
+                    </div>
+                    {/* Colour Picker */}
+                    <div className="flex-[1] justify-center flex items-center gap-2 flex-[1] bg-slate-50 border border-slate-200 rounded-md px-3 py-2 p-1">
+                        <label htmlFor="font-color" className="text-sm text-slate-700 whitespace-nowrap">
+                            Font color:
+                        </label>
+                        <input
+                            id="font-color"
+                            type="color"
+                            value={fontColor}
+                            onChange={(e) => setFontColor(e.target.value)}
+                            className="h-6 w-6 rounded-md border border-slate-300 cursor-pointer"
+                        />
                     </div>
                 </div>
 
-                <div className="optionsContainer">
+                <div id="beadCharms" className="optionsContainer controlsInner h-fit max-w-50%">
                     <div className="optionsContainerInner">
+                        {/*Charm options*/}
                         <div className="charmOptions">
                             <div>
                                 <label>Left Charm Bead: </label>
                                 <input
+                                    className="w-full bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded-md px-3 py-2 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm focus:shadow"
                                     type="text"
                                     maxLength="2"
                                     value={leftCharm}
@@ -139,11 +148,11 @@ const BraceletControls = ({
                                 </select>
                             </div>
                         </div>
-
                         <div className="charmOptions">
                             <div>
                                 <label>Right Charm Bead: </label>
                                 <input
+                                    className="w-full bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded-md px-3 py-2 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm focus:shadow"
                                     type="text"
                                     maxLength="2"
                                     value={rightCharm}
@@ -163,7 +172,7 @@ const BraceletControls = ({
                     </div>
                 </div>
 
-                <div id="beadShapes" className="optionsContainer">
+                <div id="beadShapes" className="optionsContainer controlsInner h-fit max-w-50%">
                     <label>Shape Pattern Mode: </label>
                     <select value={beadShapePatternMode} onChange={(e) => setBeadShapePatternMode(e.target.value)}>
                         <option value="manual">Manual (each bead)</option>
@@ -255,6 +264,7 @@ const BraceletControls = ({
                         <div className="optionsContainerInner">
                             <label>Custom Pattern (comma-separated):</label>
                             <input
+                                className="w-full bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded-md px-3 py-2 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm focus:shadow"
                                 type="text"
                                 value={customPatternText}
                                 onChange={(e) => setCustomPatternText(e.target.value)}
@@ -265,7 +275,7 @@ const BraceletControls = ({
                     )}
                 </div>
 
-                <div className="optionsContainer">
+                <div id="beadBackground" className="optionsContainer controlsInner">
                     <div className="optionsContainerInner">
                         <label>Bead background style:</label>
                         <select value={backgroundStyle} onChange={(e) => setBackgroundStyle(e.target.value)}>

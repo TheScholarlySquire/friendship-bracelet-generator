@@ -1,5 +1,5 @@
 body {
-    background-image: url('../img/neutral.jpg'), url('./img/neutral.jpg');
+    /* background-image: url('../img/neutral.jpg'), url('./img/neutral.jpg'); */
     background-size: cover;
     background-position: bottom;
 }
@@ -8,10 +8,10 @@ body {
   padding: 2rem;
 }
 
-#bracelet-main {
+/* #bracelet-main {
     font-family: 'Arial';
     max-width: 100vw;
 }
 #bracelet-main>h1 {
     text-align: center;
-}
+} */

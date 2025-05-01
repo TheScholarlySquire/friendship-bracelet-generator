@@ -1,22 +1,39 @@
+@import "tailwindcss";
+
 #controls-container {
-    display: flex;
-    flex-direction: column;
     max-width: 95vw;
+    gap: 0 20px;
 }
-#main-input {
-    height: 25px;
-    width: 50%;
-    align-self: center;
+#controls-container .controlsInner {
+
+}
+#beadText {
+    grid-row: 1;
+    grid-column-start: 1;
+    grid-column-end: 3;
+    height: 50px;
+}
+#beadCharms {
+    grid-row: 2;
+    grid-column-start: 1;
+    grid-column-end: 2;
+}
+#beadShapes {
+    grid-row: 2;
+    grid-column-start: 2;
+    grid-column-end: 3;
+}
+#beadBackground {
+    grid-row: 3;
+    grid-column-start: 1;
+    grid-column-end: 3;
 }
 .optionsContainer {
-    align-self: center;
-    display: flex;
-    width: 95%;
-    justify-content: space-around;
     border: 1px solid #464646;
     border-radius: 8px;
     background-color: #f1f1f190;
     box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
+    padding: 10px 5px;
     margin: 10px 0;
 
 }
@@ -32,11 +49,6 @@
 }
 .charmOptions > div {
     padding: 0 10px;
-}
-#fontOptions > div {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
 }
 #beadShapes {
     display: grid;

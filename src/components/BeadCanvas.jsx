@@ -146,7 +146,10 @@ const BeadCanvas = forwardRef(({
     const beadWidth = 40;
     const spacing = 10;
     const totalBeads = splitText.length + (leftCharm ? 1 : 0) + (rightCharm ? 1 : 0);
-    const startX = (finalDisplayWidth - braceletWidth) / 2;
+    const isSingleBead = totalBeads === 1;
+    const startX = isSingleBead
+        ? finalDisplayWidth / 2 - beadWidth / 2
+        : (finalDisplayWidth - braceletWidth) / 2;
     const centerY = 100;
     const curveAmplitude = 40;
 
@@ -163,18 +166,26 @@ const BeadCanvas = forwardRef(({
     ];
 
     const beadPositions = allChars.map((_, i) => {
-      const x = startX + i * (beadWidth + spacing);
-      const normalized = (i / (totalBeads - 1)) * 2 - 1;
-      const y = centerY - (normalized ** 2) * curveAmplitude;
-      return { x, y };
+        const x = isSingleBead
+            ? startX + beadWidth / 2
+            : startX + i * (beadWidth + spacing);
+        const normalized = isSingleBead
+            ? 0
+            : (i / (totalBeads - 1)) * 2 - 1;
+        const y = centerY - (normalized ** 2) * curveAmplitude;
+        return { x, y };
     });
 
     for (let i = 0; i < beadPositions.length; i++) {
-      const prev = beadPositions[i - 1] || beadPositions[i];
-      const next = beadPositions[i + 1] || beadPositions[i];
-      const dx = next.x - prev.x;
-      const dy = next.y - prev.y;
-      beadPositions[i].angle = Math.atan2(dy, dx);
+        if (isSingleBead) {
+            beadPositions[i].angle = 0;
+        } else {
+            const prev = beadPositions[i - 1] || beadPositions[i];
+            const next = beadPositions[i + 1] || beadPositions[i];
+            const dx = next.x - prev.x;
+            const dy = next.y - prev.y;
+            beadPositions[i].angle = Math.atan2(dy, dx);
+        }
     }
 
     if (beadPositions.length >= 2) {
