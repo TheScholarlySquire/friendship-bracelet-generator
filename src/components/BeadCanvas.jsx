@@ -1,4 +1,5 @@
 import { useRef, useEffect, forwardRef, useImperativeHandle } from 'react';
+import GraphemeSplitter from 'grapheme-splitter';
 import { drawHeart, drawStar, drawSquircle } from '../utils/canvasShapes';
 import '../styles/BeadCanvas.css';
 
@@ -15,20 +16,6 @@ function getLuminance(r, g, b) {
     return x <= 0.03928 ? x / 12.92 : Math.pow((x + 0.055) / 1.055, 2.4);
   });
   return 0.2126 * a[0] + 0.7152 * a[1] + 0.0722 * a[2];
-}
-
-function getContrastRatio(hex1, hex2) {
-  const [r1, g1, b1] = hexToRgb(hex1);
-  const [r2, g2, b2] = hexToRgb(hex2);
-  const lum1 = getLuminance(r1, g1, b1);
-  const lum2 = getLuminance(r2, g2, b2);
-  return lum1 > lum2 ? (lum1 + 0.05) / (lum2 + 0.05) : (lum2 + 0.05) / (lum1 + 0.05);
-}
-
-function getContrastingTextColor(bgHex) {
-  const [r, g, b] = hexToRgb(bgHex);
-  const lum = getLuminance(r, g, b);
-  return lum < 0.5 ? '#ffffff' : '#000000';
 }
 
 function interpolateColor(color1, color2, t) {
@@ -71,7 +58,7 @@ function drawBead(ctx, options) {
       ctx.fill();
       break;
     case 'squircle':
-      drawSquircle(ctx, -size, -size, size * 2, size * 2, 10);
+      drawSquircle(ctx, -size + 20, -size + 20, size * 2, size * 2, 10);
       ctx.fill();
       break;
     case 'heart':
@@ -88,23 +75,19 @@ function drawBead(ctx, options) {
       ctx.fill();
   }
 
-  let finalFontColor = fontColor;
-  if (typeof backgroundColor === 'string') {
-    const contrast = getContrastRatio(backgroundColor, fontColor);
-    if (contrast < 4.5) {
-      finalFontColor = getContrastingTextColor(backgroundColor);
-    }
-  }
-
-  ctx.fillStyle = finalFontColor;
-  ctx.font = `20px ${font}`;
+  ctx.fillStyle = fontColor;
+  const isEmoji = /\p{Emoji}/u.test(char);
+  ctx.font = isEmoji
+    ? `20px 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', system-ui, sans-serif`
+    : `20px '${font}', system-ui, 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif`;
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
+  console.log('Rendering char:', char, '| Codepoint:', [...char].map(c => c.codePointAt(0).toString(16)).join(' '));
   ctx.fillText(char, 0, 0);
   ctx.restore();
 }
 
-// ===== Component =====
+// ===== Main Component =====
 const BeadCanvas = forwardRef(({
   text,
   color1,
@@ -123,6 +106,7 @@ const BeadCanvas = forwardRef(({
   setShouldRedrawBackground
 }, ref) => {
   const canvasRef = useRef(null);
+  const splitter = new GraphemeSplitter();
 
   useImperativeHandle(ref, () => ({
     downloadImage(filename = 'bracelet.png') {
@@ -141,7 +125,8 @@ const BeadCanvas = forwardRef(({
     const beadWidth = 40;
     const spacing = 10;
     const padding = 60;
-    const totalBeads = text.length + (leftCharm ? 1 : 0) + (rightCharm ? 1 : 0);
+    const splitText = splitter.splitGraphemes(text);
+    const totalBeads = splitText.length + (leftCharm ? 1 : 0) + (rightCharm ? 1 : 0);
     const braceletWidth = totalBeads * (beadWidth + spacing) - spacing;
     const desiredWidth = braceletWidth + padding;
     const minWidth = window.innerWidth * 0.9;
@@ -154,20 +139,20 @@ const BeadCanvas = forwardRef(({
     canvas.style.height = `${finalDisplayHeight}px`;
     ctx.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
 
-    return { ctx, finalDisplayWidth, finalDisplayHeight, braceletWidth };
+    return { ctx, finalDisplayWidth, finalDisplayHeight, braceletWidth, splitText };
   };
 
-  const drawBracelet = (ctx, finalDisplayWidth, braceletWidth) => {
+  const drawBracelet = (ctx, finalDisplayWidth, braceletWidth, splitText) => {
     const beadWidth = 40;
     const spacing = 10;
-    const totalBeads = text.length + (leftCharm ? 1 : 0) + (rightCharm ? 1 : 0);
+    const totalBeads = splitText.length + (leftCharm ? 1 : 0) + (rightCharm ? 1 : 0);
     const startX = (finalDisplayWidth - braceletWidth) / 2;
-    const centerY = 200 / 2;
+    const centerY = 100;
     const curveAmplitude = 40;
 
     const allChars = [
       ...(leftCharm ? [leftCharm] : []),
-      ...text.split(''),
+      ...splitText,
       ...(rightCharm ? [rightCharm] : []),
     ];
 
@@ -180,7 +165,7 @@ const BeadCanvas = forwardRef(({
     const beadPositions = allChars.map((_, i) => {
       const x = startX + i * (beadWidth + spacing);
       const normalized = (i / (totalBeads - 1)) * 2 - 1;
-      const y = centerY + -(normalized ** 2) * curveAmplitude;
+      const y = centerY - (normalized ** 2) * curveAmplitude;
       return { x, y };
     });
 
@@ -192,7 +177,6 @@ const BeadCanvas = forwardRef(({
       beadPositions[i].angle = Math.atan2(dy, dx);
     }
 
-    // Draw string
     if (beadPositions.length >= 2) {
       ctx.beginPath();
       ctx.moveTo(beadPositions[0].x, beadPositions[0].y);
@@ -204,7 +188,6 @@ const BeadCanvas = forwardRef(({
       ctx.stroke();
     }
 
-    // Draw beads
     const gradStartX = startX;
     const gradEndX = startX + braceletWidth;
 
@@ -231,58 +214,62 @@ const BeadCanvas = forwardRef(({
     });
   };
 
-  // Set flag to redraw background if image was selected
   useEffect(() => {
     if (backgroundImage && backgroundImage !== 'transparent') {
       setShouldRedrawBackground(true);
     }
   }, [backgroundImage]);
 
-  // Always redraw beads, optionally draw background image
   useEffect(() => {
-    const { ctx, finalDisplayWidth, finalDisplayHeight, braceletWidth } = setupCanvas();
-    ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+    Promise.all([
+      document.fonts.load(`20px '${font}'`),
+      document.fonts.load(`20px 'Apple Color Emoji'`),
+      document.fonts.load(`20px 'Segoe UI Emoji'`),
+      document.fonts.load(`20px 'Noto Color Emoji'`),
+      document.fonts.ready,
+    ]).then(() => {
+      const { ctx, finalDisplayWidth, braceletWidth, splitText } = setupCanvas();
+      ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
 
-    if (backgroundImage?.startsWith('solid:')) {
+      if (backgroundImage && backgroundImage.startsWith('solid:')) {
         const color = backgroundImage.split(':')[1] || '#ffffff';
         ctx.fillStyle = color;
         ctx.fillRect(0, 0, canvasRef.current.width, canvasRef.current.height);
-        drawBracelet(ctx, finalDisplayWidth, braceletWidth);
-        return;
-    }
+        drawBracelet(ctx, finalDisplayWidth, braceletWidth, splitText);
+      } else if (backgroundImage && backgroundImage !== 'transparent' && shouldRedrawBackground) {
+        const img = new Image();
+        const resolvedPath = import.meta.env.BASE_URL + backgroundImage.replace(/^\//, '');
+        img.src = resolvedPath;
+        img.onload = () => {
+          const canvas = canvasRef.current;
+          const imgRatio = img.width / img.height;
+          const canvasRatio = canvas.width / canvas.height;
 
-    if (backgroundImage && backgroundImage !== 'transparent' && shouldRedrawBackground) {
-      const img = new Image();
-      const resolvedPath = import.meta.env.BASE_URL + backgroundImage.replace(/^\//, '');
-      img.src = resolvedPath;
-      img.onload = () => {
-        const imgRatio = img.width / img.height;
-        const canvasRatio = canvasRef.current.width / canvasRef.current.height;
+          let drawWidth, drawHeight, offsetX, offsetY;
+          if (imgRatio > canvasRatio) {
+            drawHeight = canvas.height;
+            drawWidth = img.width * (drawHeight / img.height);
+            offsetX = -(drawWidth - canvas.width) / 2;
+            offsetY = 0;
+          } else {
+            drawWidth = canvas.width;
+            drawHeight = img.height * (drawWidth / img.width);
+            offsetX = 0;
+            offsetY = -(drawHeight - canvas.height) / 2;
+          }
 
-        let drawWidth, drawHeight, offsetX, offsetY;
-        if (imgRatio > canvasRatio) {
-          drawHeight = canvasRef.current.height;
-          drawWidth = img.width * (drawHeight / img.height);
-          offsetX = -(drawWidth - canvasRef.current.width) / 2;
-          offsetY = 0;
-        } else {
-          drawWidth = canvasRef.current.width;
-          drawHeight = img.height * (drawWidth / img.width);
-          offsetX = 0;
-          offsetY = -(drawHeight - canvasRef.current.height) / 2;
-        }
-
-        ctx.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
-        ctx.fillRect(0, 0, canvasRef.current.width, canvasRef.current.height);
-        drawBracelet(ctx, finalDisplayWidth, braceletWidth);
-      };
-      img.onerror = () => {
-        drawBracelet(ctx, finalDisplayWidth, braceletWidth);
-      };
-    } else {
-      drawBracelet(ctx, finalDisplayWidth, braceletWidth);
-    }
+          ctx.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
+          ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+          drawBracelet(ctx, finalDisplayWidth, braceletWidth, splitText);
+        };
+        img.onerror = () => {
+          drawBracelet(ctx, finalDisplayWidth, braceletWidth, splitText);
+        };
+      } else {
+        drawBracelet(ctx, finalDisplayWidth, braceletWidth, splitText);
+      }
+    });
   }, [
     text, beadShapes, font, fontColor,
     color1, color2, backgroundStyle, alternateColors,

@@ -102,6 +102,17 @@ const BraceletControls = ({
                                 <option value="Times New Roman">Times New Roman</option>
                                 <option value="Courier New">Courier</option>
                                 <option value="Verdana">Verdana</option>
+
+                                <option value="Delius Swash Caps">Option 1</option>
+                                <option value="Delius Unicase">Option 2</option>
+                                <option value="Comic Neue">Option 3</option>
+                                <option value="Tagesschrift">Option 4</option>
+                                <option value="Open Sans">Option 5</option>
+                                <option value="Marcellus">Option 6</option>
+                                <option value="Rubik Doodle Shadow">Option 7</option>
+                                <option value="Berkshire Swash">Option 8</option>
+                                <option value="Silkscreen">Option 9</option>
+                                <option value="Alegreya Sans SC">Option 10</option>
                             </select>
                         </div>
                         <div>
@@ -334,7 +345,7 @@ const BraceletControls = ({
                                     <option value="/img/hilti3.jpg">hilti3</option>
                                     <option value="/img/hilti4.png">hilti4</option>
                                 </select>
-                                
+
                                 {backgroundImage?.startsWith('solid:') && (
                                   <input
                                     type="color"
