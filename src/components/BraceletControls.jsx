@@ -99,13 +99,11 @@ const BraceletControls = ({
                             <select value={font} onChange={(e) => setFont(e.target.value)}>
                                 <option value="Delius Swash Caps">Option 1</option>
                                 <option value="Suez One">Option 2</option>
-                                <option value="Architects Daughter">Option 3</option>
-                                <option value="Tagesschrift">Option 4</option>
-                                <option value="Fredericka the Great">Option 5</option>
-                                <option value="Emilys Candy">Option 6</option>
-                                <option value="Rubik Doodle Shadow">Option 7</option>
-                                <option value="Berkshire Swash">Option 8</option>
-                                <option value="Silkscreen">Option 9</option>
+                                <option value="Tagesschrift">Option 3</option>
+                                <option value="Fredericka the Great">Option 4</option>
+                                <option value="Emilys Candy">Option 5</option>
+                                <option value="Rubik Doodle Shadow">Option 6</option>
+                                <option value="Berkshire Swash">Option 7</option>
                             </select>
                         </div>
                         <div>
