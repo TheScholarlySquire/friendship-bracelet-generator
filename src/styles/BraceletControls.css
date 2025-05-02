@@ -1,32 +1,33 @@
 @import "tailwindcss";
 
+@theme {
+    --font-label: "Montserrat", sans-serif;
+}
+
+.material-symbols-outlined {
+    font-family: 'Material Symbols Outlined';
+    font-weight: normal;
+    font-style: normal;
+    font-size: 20px;
+    display: inline-block;
+    line-height: 1;
+    text-transform: none;
+    letter-spacing: normal;
+    word-wrap: normal;
+    white-space: nowrap;
+    direction: ltr;
+}
+
 #controls-container {
     max-width: 95vw;
     gap: 0 20px;
 }
-#controls-container .controlsInner {
-
-}
 #beadText {
-    grid-row: 1;
-    grid-column-start: 1;
-    grid-column-end: 3;
     height: 50px;
+    width: 100%;
 }
-#beadCharms {
-    grid-row: 2;
-    grid-column-start: 1;
-    grid-column-end: 2;
-}
-#beadShapes {
-    grid-row: 2;
-    grid-column-start: 2;
-    grid-column-end: 3;
-}
-#beadBackground {
-    grid-row: 3;
-    grid-column-start: 1;
-    grid-column-end: 3;
+#fontSelect {
+    width: 25%;
 }
 .optionsContainer {
     border: 1px solid #464646;
@@ -40,8 +41,8 @@
 .optionsContainerInner {
     align-content: center;
 }
-.optionsContainerInner > div {
-    margin: 10px 0;
+.shapeDropdown {
+    font-family: 'Material Symbols Outlined';
 }
 .charmOptions {
     display: flex;
@@ -50,15 +51,10 @@
 .charmOptions > div {
     padding: 0 10px;
 }
-#beadShapes {
-    display: grid;
-    grid-template-rows: 1fr 1fr;
-    max-width: 93vw;
-}
-#beadShapes > label {
-    width: 100%;
+#beadShapes label,
+#beadShapes select {
     text-align: center;
-    display: block;
+    margin: 0 5px 0 0;
 }
 #beadShapes > .optionsContainerInner {
     display: flex;
@@ -68,6 +64,19 @@
     position: relative;
     display: flex;
     align-items: center;
+}
+.shapeControls {
+
+}
+.shapeControls > label {
+
+}
+.shapeControls > input {
+
+}
+#beadShapes .shapeDropdown {
+    padding: 2px 0;
+    margin: 0 2px;
 }
 .beadShapesScroll {
     display: flex;
@@ -108,4 +117,10 @@
     margin-top: 0.5rem;
     display: flex;
     align-items: center;
+}
+.patternButton {
+    transition: 0.3s ease-in-out;
+}
+.patternButton:hover {
+    background-color: #616467;
 }

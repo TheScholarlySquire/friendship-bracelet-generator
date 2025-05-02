@@ -105,9 +105,14 @@ function App() {
                 shouldRedrawBackground={shouldRedrawBackground}
                 setShouldRedrawBackground={setShouldRedrawBackground}
             />
-            <button onClick={() => beadCanvasRef.current?.downloadImage()}>
-                download
-            </button>
+            <div className="flex justify-center">
+                <button
+                    className="patternButton shadow-[inset_0_0_0_2px_#616467] text-black px-12 py-4 rounded-full tracking-widest uppercase font-bold bg-transparent hover:text-white dark:text-neutral-200 transition duration-200 "
+                    onClick={() => beadCanvasRef.current?.downloadImage()}
+                >
+                    download
+                </button>
+            </div>
         </div>
     );
 }

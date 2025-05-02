@@ -83,8 +83,8 @@ const BraceletControls = ({
 
     return (
         <>
-            <div id="controls-container" className="grid auto-rows-max">
-                <div id="beadText" className="optionsContainer flex justify-evenly gap-8">
+            <div id="controls-container" className="flex flex-wrap">
+                <div id="beadText" className="optionsContainer flex gap-8">
                     <div className="flex-[2] flex rounded-md shadow-sm border border-slate-200 overflow-hidden focus-within:ring-2 focus-within:ring-slate-400 transition p-1">
                         <input
                             id="main-input"
@@ -93,9 +93,10 @@ const BraceletControls = ({
                             placeholder='Enter text or emojis'
                             value={text}
                             onChange={(e) => setText(e.target.value)}
-                            maxLength={20}
+                            maxLength={30}
                         />
                         <select
+                            id="fontSelect"
                             value={font}
                             onChange={(e) => setFont(e.target.value)}
                             className="bg-slate-100 text-slate-700 text-sm px-2 border-l border-slate-200 focus:outline-none"
@@ -110,8 +111,8 @@ const BraceletControls = ({
                         </select>
                     </div>
                     {/* Colour Picker */}
-                    <div className="flex-[1] justify-center flex items-center gap-2 flex-[1] bg-slate-50 border border-slate-200 rounded-md px-3 py-2 p-1">
-                        <label htmlFor="font-color" className="text-sm text-slate-700 whitespace-nowrap">
+                    <div className="flex-[1] justify-center flex items-center gap-2">
+                        <label htmlFor="font-color" className="text-sm text-slate-700 whitespace-nowrap font-label">
                             Font color:
                         </label>
                         <input
@@ -124,35 +125,35 @@ const BraceletControls = ({
                     </div>
                 </div>
 
-                <div id="beadCharms" className="optionsContainer controlsInner h-fit max-w-50%">
-                    <div className="optionsContainerInner">
+                <div id="beadCharms" className="optionsContainer controlsInner grow-1 flex align-center">
+                    <div className="optionsContainerInner w-full">
                         {/*Charm options*/}
-                        <div className="charmOptions">
-                            <div>
-                                <label>Left Charm Bead: </label>
+                        <div className="charmOptions flex flex-nowrap">
+                            <div className="flex justify-between w-55 items-center">
+                                <label className="font-label">Left Charm Bead: </label>
                                 <input
-                                    className="w-full bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded-md px-3 py-2 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm focus:shadow"
+                                    className="w-full bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded-md px-3 py-2 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm focus:shadow text-center"
                                     type="text"
                                     maxLength="2"
                                     value={leftCharm}
                                     onChange={(e) => setLeftCharm(e.target.value)}
-                                    style={{ width: '50px', marginRight: '1rem' }}
+                                    style={{ width: '50px'}}
                                 />
                             </div>
-                            <div>
-                                <label>Left Charm Shape: </label>
-                                <select value={leftCharmShape} onChange={(e) => setLeftCharmShape(e.target.value)}>
-                                    <option value="circle">Circle</option>
-                                    <option value="heart">Heart</option>
-                                    <option value="star">Star</option>
+                            <div className="flex items-center">
+                                <label className="font-label">Left Charm Shape: </label>
+                                <select className="shapeDropdown" value={leftCharmShape} onChange={(e) => setLeftCharmShape(e.target.value)}>
+                                    <option className="material-symbols-outlined" value="circle" >&#xe836;</option>
+                                    <option className="material-symbols-outlined" value="heart">&#xe87d;</option>
+                                    <option className="material-symbols-outlined" value="star">&#xe838;</option>
                                 </select>
                             </div>
                         </div>
-                        <div className="charmOptions">
-                            <div>
-                                <label>Right Charm Bead: </label>
+                        <div className="charmOptions w-full">
+                            <div className="flex justify-between w-55 items-center">
+                                <label className="font-label">Right Charm Bead: </label>
                                 <input
-                                    className="w-full bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded-md px-3 py-2 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm focus:shadow"
+                                    className="w-full bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded-md px-3 py-2 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm focus:shadow text-center"
                                     type="text"
                                     maxLength="2"
                                     value={rightCharm}
@@ -160,136 +161,38 @@ const BraceletControls = ({
                                     style={{ width: '50px' }}
                                 />
                             </div>
-                            <div>
-                                <label>Right Charm Shape: </label>
-                                <select value={rightCharmShape} onChange={(e) => setRightCharmShape(e.target.value)}>
-                                    <option value="circle">Circle</option>
-                                    <option value="heart">Heart</option>
-                                    <option value="star">Star</option>
+                            <div className="flex items-center">
+                                <label className="font-label">Right Charm Shape: </label>
+                                <select className="shapeDropdown" value={rightCharmShape} onChange={(e) => setRightCharmShape(e.target.value)}>
+                                    <option className="material-symbols-outlined" value="circle" >&#xe836;</option>
+                                    <option className="material-symbols-outlined" value="heart">&#xe87d;</option>
+                                    <option className="material-symbols-outlined" value="star">&#xe838;</option>
                                 </select>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div id="beadShapes" className="optionsContainer controlsInner h-fit max-w-50%">
-                    <label>Shape Pattern Mode: </label>
-                    <select value={beadShapePatternMode} onChange={(e) => setBeadShapePatternMode(e.target.value)}>
-                        <option value="manual">Manual (each bead)</option>
-                        <option value="alternate-every-n">Alternate every N beads</option>
-                        <option value="alternating">Alternating shapes (A/B)</option>
-                        <option value="custom-pattern">Custom pattern</option>
-                    </select>
-
-                    {/* Conditional rendering of options based on selected pattern mode */}
-                    {beadShapePatternMode === 'manual' && (
-                        <div className="optionsContainerInner scrollable">
-                            {Array.from({ length: text.length }).map((_, index) => (
-                                <select
-                                    key={index}
-                                    value={beadShapes[index] || 'circle'}
-                                    onChange={(e) => {
-                                        const newShapes = [...beadShapes];
-                                        newShapes[index] = e.target.value;
-                                        setBeadShapes(newShapes);
-                                    }}
-                                >
-                                    <option value="circle">Circle</option>
-                                    <option value="square">Square</option>
-                                    <option value="hexagon">Hexagon</option>
-                                    <option value="squircle">Squircle</option>
-                                    <option value="star">Star</option>
-                                    <option value="heart">Heart</option>
-                                </select>
-                            ))}
-                        </div>
-                    )}
-
-                    {beadShapePatternMode === 'alternate-every-n' && (
-                        <div className="optionsContainerInner">
-                            <label>Every </label>
-                            <input
-                                type="number"
-                                min="1"
-                                value={patternStep}
-                                onChange={(e) => setPatternStep(parseInt(e.target.value))}
-                            />
-                            <label> beads use </label>
-                            <select value={shapeA} onChange={(e) => setShapeA(e.target.value)}>
-                                <option value="circle">Circle</option>
-                                <option value="square">Square</option>
-                                <option value="hexagon">Hexagon</option>
-                                <option value="squircle">Squircle</option>
-                                <option value="star">Star</option>
-                                <option value="heart">Heart</option>
-                            </select>
-                            <label> and then </label>
-                            <select value={shapeB} onChange={(e) => setShapeB(e.target.value)}>
-                                <option value="circle">Circle</option>
-                                <option value="square">Square</option>
-                                <option value="hexagon">Hexagon</option>
-                                <option value="squircle">Squircle</option>
-                                <option value="star">Star</option>
-                                <option value="heart">Heart</option>
-                            </select>
-                            <button onClick={handleApplyShapePattern}>Apply Pattern</button>
-                        </div>
-                    )}
-
-                    {beadShapePatternMode === 'alternating' && (
-                        <div className="optionsContainerInner">
-                            <label>First Shape:</label>
-                            <select value={shapeA} onChange={(e) => setShapeA(e.target.value)}>
-                                <option value="circle">Circle</option>
-                                <option value="square">Square</option>
-                                <option value="hexagon">Hexagon</option>
-                                <option value="squircle">Squircle</option>
-                                <option value="star">Star</option>
-                                <option value="heart">Heart</option>
-                            </select>
-                            <label>Second Shape:</label>
-                            <select value={shapeB} onChange={(e) => setShapeB(e.target.value)}>
-                                <option value="circle">Circle</option>
-                                <option value="square">Square</option>
-                                <option value="hexagon">Hexagon</option>
-                                <option value="squircle">Squircle</option>
-                                <option value="star">Star</option>
-                                <option value="heart">Heart</option>
-                            </select>
-                            <button onClick={handleApplyShapePattern}>Apply Pattern</button>
-                        </div>
-                    )}
-
-                    {beadShapePatternMode === 'custom-pattern' && (
-                        <div className="optionsContainerInner">
-                            <label>Custom Pattern (comma-separated):</label>
-                            <input
-                                className="w-full bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded-md px-3 py-2 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm focus:shadow"
-                                type="text"
-                                value={customPatternText}
-                                onChange={(e) => setCustomPatternText(e.target.value)}
-                                placeholder="e.g., circle,circle,hexagon,star"
-                            />
-                            <button onClick={handleApplyShapePattern}>Apply Pattern</button>
-                        </div>
-                    )}
-                </div>
-
-                <div id="beadBackground" className="optionsContainer controlsInner">
-                    <div className="optionsContainerInner">
-                        <label>Bead background style:</label>
-                        <select value={backgroundStyle} onChange={(e) => setBackgroundStyle(e.target.value)}>
+                <div id="beadBackground" className="optionsContainer controlsInner grow-3 flex flex-col align-center">
+                    <div className="optionsContainerInner flex flex-wrap justify-evenly">
+                        <label className="font-label">Bead background style:</label>
+                        <select
+                            className="font-label font-label rounded-md shadow-sm border border-slate-200 overflow-hidden focus-within:ring-slate-400 transition w-max"
+                            value={backgroundStyle}
+                            onChange={(e) => setBackgroundStyle(e.target.value)}
+                        >
                             <option value="gradient">Gradient</option>
                             <option value="solid">Solid</option>
                             <option value="alternating">Alternating</option>
                         </select>
                     </div>
-                    <div className="optionsContainerInner">
+                    <div className="optionsContainerInner flex flex-wrap justify-evenly">
                         {backgroundStyle === 'alternating' && (
-                            <div>
+                            <div className="">
                                 <div className="labelAndOption">
-                                    <label>Alternate colour 1: </label>
+                                    <label className="font-label">Alternate colour 1: </label>
                                     <input
+                                        className="h-6 w-6 rounded-md border border-slate-300 cursor-pointer"
                                         type="color"
                                         value={alternateColors[0]}
                                         onChange={(e) =>
@@ -298,8 +201,9 @@ const BraceletControls = ({
                                     />
                                 </div>
                                 <div className="labelAndOption">
-                                    <label>Alternate colour 2: </label>
+                                    <label className="font-label">Alternate colour 2: </label>
                                     <input
+                                        className="h-6 w-6 rounded-md border border-slate-300 cursor-pointer"
                                         type="color"
                                         value={alternateColors[1]}
                                         onChange={(e) =>
@@ -311,58 +215,206 @@ const BraceletControls = ({
                         )}
 
                         {(backgroundStyle === 'gradient' || backgroundStyle === 'solid') && (
-                            <div className="labelAndOption">
+                            <div className="labelAndOption ">
                                 <div>
                                     <div className="labelAndOption">
-                                        <label>Background colour 1: </label>
-                                        <input type='color' value={color1} onChange={(e) => setColor1(e.target.value)} />
+                                        <label className="font-label">Background colour 1: </label>
+                                        <input
+                                                className="h-6 w-6 rounded-md border border-slate-300 cursor-pointer"
+                                                type='color'
+                                                value={color1}
+                                                onChange={(e) => setColor1(e.target.value)}
+                                            />
                                     </div>
                                     {backgroundStyle === 'gradient' && (
                                         <div className="labelAndOption">
-                                            <label>Background colour 2: </label>
-                                            <input type='color' value={color2} onChange={(e) => setColor2(e.target.value)} />
+                                            <label className="font-label">Background colour 2: </label>
+                                            <input
+                                                className="h-6 w-6 rounded-md border border-slate-300 cursor-pointer"
+                                                type='color'
+                                                value={color2}
+                                                onChange={(e) => setColor2(e.target.value)}
+                                            />
                                         </div>
                                     )}
                                 </div>
                             </div>
                         )}
 
-                        <div className="optionsContainer">
-                            <div className="optionsContainerInner">
-                                <label>Canvas Background:</label>
-                                <select
-                                value={backgroundImage}
-                                onChange={(e) => {
-                                    console.log('Selected background image:', e.target.value);
-                                    setBackgroundImage(e.target.value)
-                                    setShouldRedrawBackground(true);
-                                }}>
-                                    <option value="transparent">Transparent</option>
-                                    <option value="solid:#ffffff">Solid Colour</option>
-                                    <option value="/img/lake.jpg">Lake</option>
-                                    <option value="/img/meadow.jpg">Meadow</option>
-                                    <option value="/img/hilti1.jpg">hilti1</option>
-                                    <option value="/img/hilti2.png">hilti2</option>
-                                    <option value="/img/hilti3.jpg">hilti3</option>
-                                    <option value="/img/hilti4.png">hilti4</option>
-                                </select>
+                        <div className="optionsContainer ">
+                            <div className="optionsContainerInner flex flex-col items-center">
+                                <label className="font-label">Canvas Background:</label>
+                                <div className="flex flex-nowrap">
+                                    <select
+                                        className="font-label font-label rounded-md shadow-sm border border-slate-200 overflow-hidden focus-within:ring-slate-400 transition w-max"
+                                        value={backgroundImage}
+                                        onChange={(e) => {
+                                            console.log('Selected background image:', e.target.value);
+                                            setBackgroundImage(e.target.value)
+                                            setShouldRedrawBackground(true);
+                                        }}>
+                                        <option className="font-label" value="transparent">Transparent</option>
+                                        <option className="font-label" value="solid:#ffffff">Solid Colour</option>
+                                        <option className="font-label" value="/img/meadow.jpg">Meadow</option>
+                                        <option className="font-label" value="/img/hilti1.jpg">hilti1</option>
+                                        <option className="font-label" value="/img/hilti2.png">hilti2</option>
+                                        <option className="font-label" value="/img/hilti3.jpg">hilti3</option>
+                                        <option className="font-label" value="/img/hilti4.png">hilti4</option>
+                                    </select>
 
-                                {backgroundImage?.startsWith('solid:') && (
-                                  <input
-                                    type="color"
-                                    value={backgroundImage.split(':')[1] || '#ffffff'}
-                                    onChange={(e) => {
-                                      const color = e.target.value;
-                                      setBackgroundImage(`solid:${color}`);
-                                      setShouldRedrawBackground(true);
-                                    }}
-                                    style={{ marginLeft: '1rem' }}
-                                  />
-                                )}
+                                    {backgroundImage?.startsWith('solid:') && (
+                                        <input
+                                            className="h-6 w-6 rounded-md border border-slate-300 cursor-pointer"
+                                            type="color"
+                                            value={backgroundImage.split(':')[1] || '#ffffff'}
+                                            onChange={(e) => {
+                                                const color = e.target.value;
+                                                setBackgroundImage(`solid:${color}`);
+                                                setShouldRedrawBackground(true);
+                                            }}
+                                            style={{ marginLeft: '1rem' }}
+                                        />
+                                    )}
+                                </div>
                             </div>
                         </div>
 
                     </div>
+                </div>
+
+                <div id="beadShapes" className="optionsContainer controlsInner w-full flex flex-col flex-nowrap ">
+                    <label className="font-label">Shape Patterns: </label>
+                    <select
+                        className="font-label rounded-md shadow-sm border border-slate-200 overflow-hidden focus-within:ring-slate-400 transition"
+                        value={beadShapePatternMode}
+                        onChange={(e) => setBeadShapePatternMode(e.target.value)}>
+                            <option value="manual">Manual (each bead)</option>
+                            <option value="alternate-every-n">Alternate every N beads</option>
+                            <option value="alternating">Alternating shapes (A/B)</option>
+                            <option value="custom-pattern">Custom pattern</option>
+                    </select>
+
+                    {/* Conditional rendering of options based on selected pattern mode */}
+                    {beadShapePatternMode === 'manual' && (
+                        <div className="optionsContainerInner scrollable overflow-y-auto">
+                            {Array.from({ length: text.length }).map((_, index) => (
+                                <select
+                                    className="shapeDropdown rounded-md shadow-sm border border-slate-200 overflow-hidden focus-within:ring-slate-400 transition"
+                                    key={index}
+                                    value={beadShapes[index] || 'circle'}
+                                    onChange={(e) => {
+                                        const newShapes = [...beadShapes];
+                                        newShapes[index] = e.target.value;
+                                        setBeadShapes(newShapes);
+                                    }}
+                                >
+                                    <option className="material-symbols-outlined" value="circle" >&#xe836;</option>
+                                    <option className="material-symbols-outlined" value="square">&#xeb36;</option>
+                                    <option className="material-symbols-outlined" value="hexagon">&#xeb39;</option>
+                                    <option className="material-symbols-outlined" value="squircle">&#xe841;</option>
+                                    <option className="material-symbols-outlined" value="star">&#xe838;</option>
+                                    <option className="material-symbols-outlined" value="heart">&#xe87d;</option>
+                                </select>
+                            ))}
+                        </div>
+                    )}
+
+                    {beadShapePatternMode === 'alternate-every-n' && (
+                        <div className="optionsContainerInner flex flex-wrap justify-center gap-2 mt-[10px]">
+                            <div className="shapeControls flex align-center items-center">
+                                <label className="font-label">Every </label>
+                                <input
+                                    className="font-label w-10 text-center rounded-md shadow-sm border border-slate-200 overflow-hidden focus-within:ring-slate-400 transition"
+                                    type="number"
+                                    min="1"
+                                    value={patternStep}
+                                    onChange={(e) => setPatternStep(parseInt(e.target.value))}
+                                />
+                            </div>
+                            <div className="shapeControls flex align-center items-center">
+                                <label className="font-label"> beads use </label>
+                                <select className="shapeDropdown rounded-md shadow-sm border border-slate-200 overflow-hidden focus-within:ring-slate-400 transition" value={shapeA} onChange={(e) => setShapeA(e.target.value)}>
+                                    <option className="material-symbols-outlined" value="circle" >&#xe836;</option>
+                                    <option className="material-symbols-outlined" value="square">&#xeb36;</option>
+                                    <option className="material-symbols-outlined" value="hexagon">&#xeb39;</option>
+                                    <option className="material-symbols-outlined" value="squircle">&#xe841;</option>
+                                    <option className="material-symbols-outlined" value="star">&#xe838;</option>
+                                    <option className="material-symbols-outlined" value="heart">&#xe87d;</option>
+                                </select>
+                            </div>
+                            <div className="shapeControls flex align-center items-center">
+                                <label className="font-label"> and then </label>
+                                <select className="shapeDropdown rounded-md shadow-sm border border-slate-200 overflow-hidden focus-within:ring-slate-400 transition" value={shapeB} onChange={(e) => setShapeB(e.target.value)}>
+                                    <option className="material-symbols-outlined" value="circle" >&#xe836;</option>
+                                    <option className="material-symbols-outlined" value="square">&#xeb36;</option>
+                                    <option className="material-symbols-outlined" value="hexagon">&#xeb39;</option>
+                                    <option className="material-symbols-outlined" value="squircle">&#xe841;</option>
+                                    <option className="material-symbols-outlined" value="star">&#xe838;</option>
+                                    <option className="material-symbols-outlined" value="heart">&#xe87d;</option>
+                                </select>
+                            </div>
+                            <button
+                                className="patternButton shadow-[inset_0_0_0_2px_#616467] text-black px-12 py-4 rounded-full tracking-widest uppercase font-bold bg-transparent hover:text-white dark:text-neutral-200 transition duration-200"
+                                onClick={handleApplyShapePattern}
+                            >
+                                Apply Pattern
+                            </button>
+                        </div>
+                    )}
+
+                    {beadShapePatternMode === 'alternating' && (
+                        <div className="optionsContainerInner flex justify-center gap-2 align-center items-center mt-[10px]">
+                            <div>
+                                <label className="font-label">First Shape:</label>
+                                <select className="shapeDropdown rounded-md shadow-sm border border-slate-200 overflow-hidden focus-within:ring-slate-400 transition" value={shapeA} onChange={(e) => setShapeA(e.target.value)}>
+                                    <option className="material-symbols-outlined" value="circle" >&#xe836;</option>
+                                    <option className="material-symbols-outlined" value="square">&#xeb36;</option>
+                                    <option className="material-symbols-outlined" value="hexagon">&#xeb39;</option>
+                                    <option className="material-symbols-outlined" value="squircle">&#xe841;</option>
+                                    <option className="material-symbols-outlined" value="star">&#xe838;</option>
+                                    <option className="material-symbols-outlined" value="heart">&#xe87d;</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label className="font-label">Second Shape:</label>
+                                <select className="shapeDropdown rounded-md shadow-sm border border-slate-200 overflow-hidden focus-within:ring-slate-400 transition" value={shapeB} onChange={(e) => setShapeB(e.target.value)}>
+                                    <option className="material-symbols-outlined" value="circle" >&#xe836;</option>
+                                    <option className="material-symbols-outlined" value="square">&#xeb36;</option>
+                                    <option className="material-symbols-outlined" value="hexagon">&#xeb39;</option>
+                                    <option className="material-symbols-outlined" value="squircle">&#xe841;</option>
+                                    <option className="material-symbols-outlined" value="star">&#xe838;</option>
+                                    <option className="material-symbols-outlined" value="heart">&#xe87d;</option>
+                                </select>
+                            </div>
+                            <button
+                                className="patternButton shadow-[inset_0_0_0_2px_#616467] text-black px-12 py-4 rounded-full tracking-widest uppercase font-bold bg-transparent hover:text-white dark:text-neutral-200 transition duration-200"
+                                onClick={handleApplyShapePattern}
+                            >
+                                Apply Pattern
+                            </button>
+                        </div>
+                    )}
+
+                    {beadShapePatternMode === 'custom-pattern' && (
+                        <div className="optionsContainerInner flex flex-wrap justify-center gap-2 mt-[10px]">
+                            <div>
+                                <label className="font-label">Custom Pattern (comma-separated):</label>
+                                <input
+                                    className="font-label w-full bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded-md px-3 py-2 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm focus:shadow"
+                                    type="text"
+                                    value={customPatternText}
+                                    onChange={(e) => setCustomPatternText(e.target.value)}
+                                    placeholder="e.g., circle,circle,hexagon,star"
+                                />
+                            </div>
+                            <button
+                                className="patternButton shadow-[inset_0_0_0_2px_#616467] text-black px-12 py-4 rounded-full tracking-widest uppercase font-bold bg-transparent hover:text-white dark:text-neutral-200 transition duration-200"
+                                onClick={handleApplyShapePattern}
+                            >
+                                Apply Pattern
+                            </button>
+                        </div>
+                    )}
                 </div>
             </div>
         </>
