@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import '../styles/BraceletControls.css';
+import GraphemeSplitter from 'grapheme-splitter';
 
 const BraceletControls = ({
     text,
@@ -37,10 +38,14 @@ const BraceletControls = ({
     const [shapeB, setShapeB] = useState('square');
     const [customPatternText, setCustomPatternText] = useState('circle,square,hexagon,star,heart');
 
+    const splitter = new GraphemeSplitter();
+    const graphemes = splitter.splitGraphemes(text);
+
     const handleApplyShapePattern = () => {
         const newShapes = [];
+
         if (beadShapePatternMode === 'alternate-every-n') {
-            for (let i = 0; i < text.length; i++) {
+            for (let i = 0; i < graphemes.length; i++) {
                 if (Math.floor(i / patternStep) % 2 === 0) {
                     newShapes.push(shapeA);
                 } else {
@@ -48,15 +53,16 @@ const BraceletControls = ({
                 }
             }
         } else if (beadShapePatternMode === 'alternating') {
-            for (let i = 0; i < text.length; i++) {
+            for (let i = 0; i < graphemes.length; i++) {
                 newShapes.push(i % 2 === 0 ? shapeA : shapeB);
             }
         } else if (beadShapePatternMode === 'custom-pattern') {
             const customShapes = customPatternText.split(',').map(s => s.trim().toLowerCase());
-            for (let i = 0; i < text.length; i++) {
+            for (let i = 0; i < graphemes.length; i++) {
                 newShapes.push(customShapes[i % customShapes.length]);
             }
         }
+
         setBeadShapes(newShapes);
     };
 
@@ -66,7 +72,7 @@ const BraceletControls = ({
             // Do nothing, manual user input
             return;
         } else if (beadShapePatternMode === 'alternate-every-n') {
-            for (let i = 0; i < text.length; i++) {
+            for (let i = 0; i < graphemes.length; i++) {
                 if ((i + 1) % patternInterval === 0) {
                     newShapes.push(patternShapeB);
                 } else {
@@ -74,7 +80,7 @@ const BraceletControls = ({
                 }
             }
         } else if (beadShapePatternMode === 'alternating') {
-            for (let i = 0; i < text.length; i++) {
+            for (let i = 0; i < graphemes.length; i++) {
                 newShapes.push(i % 2 === 0 ? patternShapeA : patternShapeB);
             }
         }
@@ -297,7 +303,7 @@ const BraceletControls = ({
                     {/* Conditional rendering of options based on selected pattern mode */}
                     {beadShapePatternMode === 'manual' && (
                         <div className="optionsContainerInner scrollable overflow-y-auto">
-                            {Array.from({ length: text.length }).map((_, index) => (
+                            {graphemes.map((_, index) => (
                                 <select
                                     className="shapeDropdown rounded-md shadow-sm border border-slate-200 overflow-hidden focus-within:ring-slate-400 transition"
                                     key={index}

@@ -28,7 +28,16 @@ function interpolateColor(color1, color2, t) {
 }
 
 function drawBead(ctx, options) {
-  const { char, shape, backgroundColor, fontColor, font, angle, x, y } = options;
+  const {
+      char,
+      shape,
+      backgroundColor,
+      fontColor,
+      font,
+      angle,
+      x,
+      y,
+  } = options;
   ctx.save();
   ctx.translate(x, y);
   ctx.rotate(angle);
@@ -142,88 +151,99 @@ const BeadCanvas = forwardRef(({
     return { ctx, finalDisplayWidth, finalDisplayHeight, braceletWidth, splitText };
   };
 
-  const drawBracelet = (ctx, finalDisplayWidth, braceletWidth, splitText) => {
-    const beadWidth = 40;
-    const spacing = 10;
-    const totalBeads = splitText.length + (leftCharm ? 1 : 0) + (rightCharm ? 1 : 0);
-    const isSingleBead = totalBeads === 1;
-    const startX = isSingleBead
-        ? finalDisplayWidth / 2 - beadWidth / 2
-        : (finalDisplayWidth - braceletWidth) / 2;
-    const centerY = 100;
-    const curveAmplitude = 40;
+    const drawBracelet = (ctx, finalDisplayWidth, braceletWidth, splitText) => {
+        const beadWidth = 40;
+        const spacing = 10;
+        const totalBeads = splitText.length + (leftCharm ? 1 : 0) + (rightCharm ? 1 : 0);
+        const isSingleBead = totalBeads === 1;
+        const startX = isSingleBead
+            ? finalDisplayWidth / 2 - beadWidth / 2
+            : (finalDisplayWidth - braceletWidth) / 2;
+        const centerY = 100;
+        const curveAmplitude = 40;
 
-    const allChars = [
-      ...(leftCharm ? [leftCharm] : []),
-      ...splitText,
-      ...(rightCharm ? [rightCharm] : []),
-    ];
-
-    const allShapes = [
-      ...(leftCharm ? [leftCharmShape] : []),
-      ...beadShapes,
-      ...(rightCharm ? [rightCharmShape] : []),
-    ];
-
-    const beadPositions = allChars.map((_, i) => {
-        const x = isSingleBead
-            ? startX + beadWidth / 2
-            : startX + i * (beadWidth + spacing);
-        const normalized = isSingleBead
-            ? 0
-            : (i / (totalBeads - 1)) * 2 - 1;
-        const y = centerY - (normalized ** 2) * curveAmplitude;
-        return { x, y };
-    });
-
-    for (let i = 0; i < beadPositions.length; i++) {
-        if (isSingleBead) {
-            beadPositions[i].angle = 0;
-        } else {
-            const prev = beadPositions[i - 1] || beadPositions[i];
-            const next = beadPositions[i + 1] || beadPositions[i];
-            const dx = next.x - prev.x;
-            const dy = next.y - prev.y;
-            beadPositions[i].angle = Math.atan2(dy, dx);
+        const adjustedBeadShapes = [...beadShapes];
+            while (adjustedBeadShapes.length < splitText.length) {
+              adjustedBeadShapes.push('circle');
+            }
+            if (adjustedBeadShapes.length > splitText.length) {
+              adjustedBeadShapes.length = splitText.length; // truncate excess shapes
         }
-    }
 
-    if (beadPositions.length >= 2) {
-      ctx.beginPath();
-      ctx.moveTo(beadPositions[0].x, beadPositions[0].y);
-      for (let i = 1; i < beadPositions.length; i++) {
-        ctx.lineTo(beadPositions[i].x, beadPositions[i].y);
-      }
-      ctx.strokeStyle = '#000';
-      ctx.lineWidth = 2;
-      ctx.stroke();
-    }
+        const allChars = [
+          ...(leftCharm ? [leftCharm] : []),
+          ...splitText,
+          ...(rightCharm ? [rightCharm] : []),
+        ];
 
-    const gradStartX = startX;
-    const gradEndX = startX + braceletWidth;
+        const allShapes = [
+          ...(leftCharm ? [leftCharmShape] : []),
+          ...adjustedBeadShapes,
+          ...(rightCharm ? [rightCharmShape] : []),
+        ];
 
-    allChars.forEach((char, i) => {
-      const { x, y, angle } = beadPositions[i];
-      let backgroundColor = color1;
+        const beadPositions = allChars.map((_, i) => {
+            const x = isSingleBead
+                ? startX + beadWidth / 2
+                : startX + i * (beadWidth + spacing);
+            const normalized = isSingleBead
+                ? 0
+                : (i / (totalBeads - 1)) * 2 - 1;
+            const y = centerY - (normalized ** 2) * curveAmplitude;
+            return { x, y };
+        });
+        console.log("Graphemes:", splitText);
+        console.log("All shapes:", allShapes);
+        console.log("Bead positions:", beadPositions);
 
-      if (backgroundStyle === 'alternating') {
-        backgroundColor = i % 2 === 0 ? alternateColors[0] : alternateColors[1];
-      } else if (backgroundStyle === 'gradient') {
-        const t = (x - gradStartX) / (gradEndX - gradStartX);
-        backgroundColor = interpolateColor(color1, color2, t);
-      }
+        for (let i = 0; i < beadPositions.length; i++) {
+            if (isSingleBead) {
+                beadPositions[i].angle = 0;
+            } else {
+                const prev = beadPositions[i - 1] || beadPositions[i];
+                const next = beadPositions[i + 1] || beadPositions[i];
+                const dx = next.x - prev.x;
+                const dy = next.y - prev.y;
+                beadPositions[i].angle = Math.atan2(dy, dx);
+            }
+        }
 
-      drawBead(ctx, {
-        char,
-        shape: allShapes[i] || 'circle',
-        x, y,
-        backgroundColor,
-        fontColor,
-        font,
-        angle,
-      });
-    });
-  };
+        if (beadPositions.length >= 2) {
+          ctx.beginPath();
+          ctx.moveTo(beadPositions[0].x, beadPositions[0].y);
+          for (let i = 1; i < beadPositions.length; i++) {
+            ctx.lineTo(beadPositions[i].x, beadPositions[i].y);
+          }
+          ctx.strokeStyle = '#000';
+          ctx.lineWidth = 2;
+          ctx.stroke();
+        }
+
+        const gradStartX = startX;
+        const gradEndX = startX + braceletWidth;
+
+        allChars.forEach((char, i) => {
+          const { x, y, angle } = beadPositions[i];
+          let backgroundColor = color1;
+
+          if (backgroundStyle === 'alternating') {
+            backgroundColor = i % 2 === 0 ? alternateColors[0] : alternateColors[1];
+          } else if (backgroundStyle === 'gradient') {
+            const t = (x - gradStartX) / (gradEndX - gradStartX);
+            backgroundColor = interpolateColor(color1, color2, t);
+          }
+
+          drawBead(ctx, {
+            char,
+            shape: allShapes[i] || 'circle',
+            x, y,
+            backgroundColor,
+            fontColor,
+            font,
+            angle,
+          });
+        });
+    };
 
   useEffect(() => {
     if (backgroundImage && backgroundImage !== 'transparent') {

@@ -8,6 +8,10 @@ body {
   padding: 2rem;
 }
 
+#bracelet-main > h1 {
+    font-family: "Montserrat", sans-serif;
+}
+
 /* #bracelet-main {
     font-family: 'Arial';
     max-width: 100vw;
